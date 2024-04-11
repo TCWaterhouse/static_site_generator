@@ -9,13 +9,13 @@ class HTMLNode:
         raise NotImplementedError("Child classes should override this method to render themselves as HTML")
     
     def props_to_html(self):
-        if self.props == None:
-            return None
+        if self.props is None:
+            return ""
         else:
             attributes = ""
             for k, v in self.props.items():
-                attributes = attributes + f' {k}:"{v}"'
+                attributes += f' {k}="{v}"'
             return attributes
         
     def __repr__(self):
-        return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
+        return f"HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})"
