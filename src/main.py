@@ -21,7 +21,7 @@ def main():
     )
 
     string = node2.to_html()
-    print(string)
+
     
 
 main()
