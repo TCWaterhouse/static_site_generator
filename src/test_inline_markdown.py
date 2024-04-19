@@ -1,7 +1,9 @@
 import unittest
 
 from inline_markdown import (
-    split_nodes_delimiter
+    split_nodes_delimiter,
+    extract_markdown_images,
+    extract_markdown_links
 )
 
 from textnode import (
@@ -57,6 +59,27 @@ class TestInlineMarkdown(unittest.TestCase):
     def test_split_nodes_error(self):
         node = TextNode("This is text with a `code block word", text_type_text)
         self.assertRaises(ValueError, split_nodes_delimiter, [node], "`", text_type_code)
+
+    def test_extract_images(self):
+        text = "This is text with an ![image](www.test.com) and ![another](www.anothertest.com)"
+        self.assertEqual(
+            [("image", "www.test.com"), ("another", "www.anothertest.com")],
+            extract_markdown_images(text)
+        )
+
+    def test_extract_links(self):
+        text = "This is text with an [link](www.test.com) and [another](www.anothertest.com)"
+        self.assertEqual(
+            [("link", "www.test.com"), ("another", "www.anothertest.com")],
+            extract_markdown_links(text)
+        )
+
+    def test_extract_both(self):
+        text = "This is text with an ![image](www.test.com) and [link](www.link.com)"
+        self.assertEqual(
+            [("link", "www.link.com")],
+            extract_markdown_links(text)
+        )
 
 if __name__ == "__main__":
     unittest.main()
