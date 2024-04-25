@@ -79,7 +79,7 @@ def split_nodes_link(old_nodes):
         split_nodes = []
         original_text = node.text
         for link_tup in link_tups:
-            segments = original_text.split(f"![{link_tup[0]}]({link_tup[1]})", 1)
+            segments = original_text.split(f"[{link_tup[0]}]({link_tup[1]})", 1)
             if link_tup == link_tups[-1]:
                 if segments[0] != "":
                     split_nodes.append(TextNode(segments[0], text_type_text))
@@ -95,8 +95,8 @@ def split_nodes_link(old_nodes):
     return new_nodes
 
 def main():
-    node = TextNode("![image](www.test.com) and ![another](www.anotherlink.com) with some text after", text_type_text)
-    nodes = split_nodes_image([node])
+    node = TextNode("This text has an [link](www.test.com) with [another](www.example.com) and some text after", text_type_text)
+    nodes = split_nodes_link([node])
     print(nodes)
 
 main()

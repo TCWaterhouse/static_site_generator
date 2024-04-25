@@ -3,7 +3,9 @@ import unittest
 from inline_markdown import (
     split_nodes_delimiter,
     extract_markdown_images,
-    extract_markdown_links
+    extract_markdown_links,
+    split_nodes_image,
+    split_nodes_link
 )
 
 from textnode import (
@@ -11,7 +13,9 @@ from textnode import (
     text_type_text,
     text_type_bold,
     text_type_italic,
-    text_type_code
+    text_type_code,
+    text_type_image,
+    text_type_link
 )
 
 class TestInlineMarkdown(unittest.TestCase):
@@ -79,6 +83,66 @@ class TestInlineMarkdown(unittest.TestCase):
         self.assertEqual(
             [("link", "www.link.com")],
             extract_markdown_links(text)
+        )
+
+    def test_split_images_none(self):
+        node = TextNode("This text has no *images*", text_type_text)
+        self.assertEqual(
+            [TextNode("This text has no *images*", text_type_text)],
+            split_nodes_image([node])
+        )
+
+    def test_split_images_multiple(self):
+        node = TextNode("This text has an ![image](www.test.com) with ![another](www.example.com) and some text after", text_type_text)
+        self.assertEqual(
+            [
+                TextNode("This text has an ", text_type_text),
+                TextNode("image", text_type_image, "www.test.com"),
+                TextNode(" with ", text_type_text),
+                TextNode("another", text_type_image, "www.example.com"),
+                TextNode(" and some text after", text_type_text)
+            ],
+            split_nodes_image([node])
+        )
+
+    def test_split_images_both_types(self):
+        node = TextNode("This text has an ![image](www.test.com) and a [link](www.link.com)", text_type_text)
+        self.assertEqual(
+            [
+                TextNode("This text has an ", text_type_text),
+                TextNode("image", text_type_image, "www.test.com"),
+                TextNode(" and a [link](www.link.com)", text_type_text)
+            ],
+            split_nodes_image([node])
+        )
+    
+    def test_split_images_multiple_nodes(self):
+        nodes = [
+            TextNode("An ![image](www.test.com)", text_type_text),
+            TextNode("Another sentance with an ![image](www.example.com) and a word", text_type_text)
+        ]
+        self.assertEqual(
+            [
+                TextNode("An ", text_type_text),
+                TextNode("image", text_type_image, "www.test.com"),
+                TextNode("Another sentance with an ", text_type_text),
+                TextNode("image", text_type_image, "www.example.com"),
+                TextNode(" and a word", text_type_text)
+            ],
+            split_nodes_image(nodes)
+        )
+
+    def test_split_links_multiple(self):
+        node = TextNode("This text has an [link](www.test.com) with [another](www.example.com) and some text after", text_type_text)
+        self.assertEqual(
+            [
+                TextNode("This text has an ", text_type_text),
+                TextNode("link", text_type_link, "www.test.com"),
+                TextNode(" with ", text_type_text),
+                TextNode("another", text_type_link, "www.example.com"),
+                TextNode(" and some text after", text_type_text)
+            ],
+            split_nodes_link([node])
         )
 
 if __name__ == "__main__":
