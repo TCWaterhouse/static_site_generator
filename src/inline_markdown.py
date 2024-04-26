@@ -94,9 +94,11 @@ def split_nodes_link(old_nodes):
         new_nodes.extend(split_nodes)
     return new_nodes
 
-def main():
-    node = TextNode("This text has an [link](www.test.com) with [another](www.example.com) and some text after", text_type_text)
-    nodes = split_nodes_link([node])
-    print(nodes)
-
-main()
+def text_to_textnodes(text):
+    nodes = [TextNode(text, text_type_text)]
+    nodes = split_nodes_delimiter(nodes, "**", text_type_bold)
+    nodes = split_nodes_delimiter(nodes, "*", text_type_italic)
+    nodes = split_nodes_delimiter(nodes, "`", text_type_code)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    return nodes
