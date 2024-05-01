@@ -16,4 +16,23 @@ def markdown_to_blocks(markdown):
     return filtered_blocks
 
 def block_to_block_type(block):
-    pass
+    lines = block.split("\n")
+    headings = "# ", "## ", "### ", "#### ", "##### ", "###### "
+    if block.startswith(headings):
+        return block_type_heading
+    if len(lines) > 1 and lines[0].startswith("```") and lines[-1].startswith("```"):
+        return block_type_code
+    if all(line.startswith(">") for line in lines):
+        return block_type_quote
+    if all(line.startswith("* ") for line in lines):
+        return block_type_unordered_list
+    if all(line.startswith("- ") for line in lines):
+        return block_type_unordered_list
+    for i in range(len(lines)):
+        if lines[i].startswith(f"{i + 1}. "):
+            if i == len(lines) - 1:
+                return block_type_ordered_list
+            continue
+        else:
+            break
+    return block_type_paragraph
